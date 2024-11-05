@@ -7,8 +7,8 @@ export function useOptimisticMutation<Q, P = any, K extends QueryKey = QueryKey>
   updateQueryFn
 }: {
   queryKey: K
-  mutationFn: (params: P) => Promise<void>
-  updateQueryFn: (params: P, queryData?: Q) => Q | undefined
+  mutationFn: (params: P) => Promise<void | { ownerId: string, name: string }>
+  updateQueryFn: (params: P | { ownerId: string, name: string }, queryData?: Q) => Q | undefined
 }) {
   const client = useQueryClient();
 

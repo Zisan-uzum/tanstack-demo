@@ -2,6 +2,8 @@
 import { useQuery } from '@tanstack/vue-query';
 
 const newTodo = ref('')
+const searchTodoName = ref("")
+const isEnabledSearchTodoName = computed(() => !!searchTodoName.value)
 
 const { data: todos, suspense } = useQuery({
   queryKey: ['todos'],
@@ -10,6 +12,19 @@ const { data: todos, suspense } = useQuery({
 })
 
 await suspense()
+
+//isLoading means isPending && isFetching
+const { data: filteredTodosByName, isLoading: isLoadingFilteredTodosByName } = useQuery({
+  queryKey: ['todos', searchTodoName],
+  queryFn: () => $fetch('/api/searchTodosByName', {
+    method: 'POST',
+    body: {
+      name: searchTodoName.value
+    }
+  }),
+  // disabled as long as the filter is empty
+  enabled: isEnabledSearchTodoName,
+})
 
 async function addTodo(newTodo: string) {
   return $fetch("/api/todos", {
@@ -38,7 +53,23 @@ const { mutate } = useOptimisticMutation({
       <button @click="mutate(newTodo)">Add</button>
     </div>
 
-    <h2>Todos</h2>
-    <pre>{{ todos }}</pre>
+
+    <div>
+      <input v-model="searchTodoName" type="text" placeholder="Search by name">
+    </div>
+
+    <div>
+      <h2>Todos</h2>
+      <pre>{{ todos }}</pre>
+    </div>
+
+    <div v-if="isLoadingFilteredTodosByName">
+      Loading...
+    </div>
+    <div v-else>
+      <h2>Filtered Todos By Name</h2>
+      <pre>{{ filteredTodosByName }}</pre>
+    </div>
+
   </div>
 </template>
