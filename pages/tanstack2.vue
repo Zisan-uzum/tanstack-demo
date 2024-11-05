@@ -18,14 +18,14 @@ async function addTodo(newTodo: string) {
       todo: newTodo,
     },
   });
-
-  todos.value.push({text: newTodo, id: todos.value.length + 1, completed: false})
 }
 
 const { mutate } = useOptimisticMutation({
   queryKey: ['todos'],
-  mutationFn: addTodo,
-  updateQueryFn: (newTodo, old: any[]) => [...old, {text: newTodo, id: old.length + 1, completed: false}]
+  mutationFn: async(newTodo: string) => {
+    await addTodo(newTodo)
+  },
+  updateQueryFn: (newTodo, old: any[] = []) => [...old, {text: newTodo, id: old.length + 1, completed: false}]
 })
 </script>
 
