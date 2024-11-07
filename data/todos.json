@@ -1,32 +1,18 @@
 [
   {
-    "id": 1730471144780,
-    "text": "NEW SOMETHING",
+    "id": 1730885842777,
+    "text": "laundry",
     "completed": false
   },
   {
-    "id": 1730471531223,
-    "text": "ASDFSDF",
+    "id": 1730886049092,
+    "text": "sewing",
     "completed": false
   },
   {
-    "id": 1730471581432,
-    "text": "TEST",
-    "completed": false
-  },
-  {
-    "id": 1730471623535,
-    "text": "TEST",
-    "completed": false
-  },
-  {
-    "id": 1730472233023,
-    "text": "hjklh",
-    "completed": false
-  },
-  {
-    "id": 1730828189658,
-    "text": "bik",
+    "id": 1730890283173,
+    "text": "wash dished",
     "completed": false
   }
+
 ]

@@ -14,12 +14,12 @@ const { data: todos, suspense } = useQuery({
 await suspense()
 
 //isLoading means isPending && isFetching
-const { data: filteredTodosByName, isLoading: isLoadingFilteredTodosByName } = useQuery({
+const { data: filteredTodosByName, isPending: isPendingFilteredTodosByName, isLoading: isLoadingFilteredTodosByName } = useQuery({
   queryKey: ['todos', searchTodoName],
   queryFn: () => $fetch('/api/searchTodosByName', {
     method: 'POST',
     body: {
-      name: searchTodoName.value
+      name: searchTodoName.value 
     }
   }),
   // disabled as long as the filter is empty
@@ -58,18 +58,25 @@ const { mutate } = useOptimisticMutation({
       <input v-model="searchTodoName" type="text" placeholder="Search by name">
     </div>
 
-    <div>
-      <h2>Todos</h2>
-      <pre>{{ todos }}</pre>
-    </div>
 
-    <div v-if="isLoadingFilteredTodosByName">
-      Loading...
-    </div>
-    <div v-else>
-      <h2>Filtered Todos By Name</h2>
-      <pre>{{ filteredTodosByName }}</pre>
-    </div>
+    <div style="display: flex; justify-content: center; gap: 20px;">
 
+      <div>
+        <h2>Todos</h2>
+        <pre>{{ todos }}</pre>
+      </div>
+
+
+      <p v-if="isPendingFilteredTodosByName">Pending...</p>
+      <p v-if="isLoadingFilteredTodosByName">
+        Loading...
+      </p>
+      <div v-else>
+        <h2>Filtered Todos By Name</h2>
+        <pre>{{ filteredTodosByName }}</pre>
+      </div>
+
+
+    </div>
   </div>
 </template>

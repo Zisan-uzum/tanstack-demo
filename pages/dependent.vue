@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query';
+import { queryOptions, useQuery } from '@tanstack/vue-query';
 
 
 const personName = ref('') // Reactive variable for the person's name
@@ -32,6 +32,11 @@ async function getPersonId(name: string) {
     },
   });
 }
+
+async function getPersonIdUndefined(name: string) {
+  await new Promise(resolve => setTimeout(resolve, 2000))
+  return undefined;
+}
 async function addProject(name: string, ownerId: string) {
   return $fetch("/api/projects", {
     method: "POST",
@@ -44,7 +49,8 @@ async function addProject(name: string, ownerId: string) {
 
 const {data: allProjects} = useQuery<Array<{ownerId: string, name: string}>>({
   queryKey: ['projects'],
-  queryFn: () => $fetch('/api/projects')
+  queryFn: () => $fetch('/api/projects'),
+  // refetchOnWindowFocus: false
 })
 
 
@@ -56,7 +62,6 @@ const { data: personId} = useQuery<{id: string, name: string}>({
 
 const enabledProjectsOfSpesificPerson = computed(() => !!personId.value)
 
-
 const { data: projectsOfSpesificPerson , refetch} = useQuery<Array<{ownerId: string, name: string}>>({
   queryKey: ['projects', personId.value],
   queryFn: () => $fetch('/api/projectsByOwnerId', {
@@ -66,6 +71,7 @@ const { data: projectsOfSpesificPerson , refetch} = useQuery<Array<{ownerId: str
     }
   }),
   enabled: enabledProjectsOfSpesificPerson, // The query will not execute until `enabled == true`
+  // staleTime : 0,
 })
 
 watch(personId, async () => {
@@ -86,9 +92,14 @@ const { mutate: mutateAddPerson } = useOptimisticMutation({
 const { mutate: mutateAddProject } = useOptimisticMutation({
   queryKey: ['projects'],
   mutationFn: async({selectedPersonName, newProjectName}) => {
-    const personId = await getPersonId(selectedPersonName);
-    await addProject(newProjectName, personId);
-    return { ownerId: personId, name: newProjectName }; // Return the ownerId and project name
+    console.log("name", newProjectName)
+    const personId = await getPersonIdUndefined(selectedPersonName);
+
+    if(personId){
+      await addProject(newProjectName, personId);
+    }
+    return { ownerId: personId ?? "", name: newProjectName }; // Return the ownerId and project name
+
   },
   updateQueryFn: (newProject, old: any[] = []) => {
     return [...old, { ownerId: newProject.ownerId, name: newProject.name }];
