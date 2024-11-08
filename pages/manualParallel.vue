@@ -7,7 +7,7 @@ const peopleQuery = useQuery({
     queryFn: () => $fetch('/api/people')
 })
 
-await peopleQuery.suspense()
+// await peopleQuery.suspense()
 
 const projectsQuery = useQuery({
     queryKey: ['projects'],
